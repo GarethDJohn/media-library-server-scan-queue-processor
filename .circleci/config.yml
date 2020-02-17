@@ -1,0 +1,86 @@
+version: 2
+jobs:
+  install:
+    working_directory: ~/node-github-flow-circle-ci-starter
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Update npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install dependencies
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  unit-test:
+    working_directory: ~/node-github-flow-circle-ci-starter
+    docker:
+      - image: circleci/node:lts
+
+    steps:
+      - attach_workspace:
+          at: .
+      - run: npm test
+  
+  publish:
+    working_directory: ~/node-github-fow-circle-ci-starter
+    docker:
+      - image: circleci/node:lts
+
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Configure NPM authentication token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+      - run:
+          name: Publish package
+          command: npm publish --dry-run
+
+workflows:
+  version: 2
+  install-and-test:
+    jobs:
+      - install:
+          filters:
+            branches:
+              only:
+                - /^feature\/.*/
+      - unit-test:
+          requires:
+            - install
+          filters:
+            branches:
+              only:
+                - /^feature\/.*/
+  install-and-publish:
+    jobs:
+      - install:
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only:
+                - /^v\d+\.\d+\.\d+/
+      - publish:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only:
+                - /^v\d+\.\d+\.\d+/
