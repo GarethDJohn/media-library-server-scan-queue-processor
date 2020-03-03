@@ -1,14 +1,19 @@
 {
-  "name": "node-github-flow-circle-ci-starter",
+  "name": "@media-library/media-library-server-scan-queue-processor",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
   "scripts": {
-    "test": "mocha test/**/*.test.js"
+    "build": "tsc",
+    "test": "ts-mocha test/**/*.test.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GarethDJohn/node-github-flow-circle-ci-starter.git"
+    "url": "git+https://github.com/GarethDJohn/media-library-server-scan-queue-processor.git"
   },
   "keywords": [
     "node",
@@ -21,11 +26,27 @@
   "author": "Gareth John <gdjohn@logicalparadox.co.uk> (http://logicalparadox.co.uk)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/GarethDJohn/node-github-flow-circle-ci-starter/issues"
+    "url": "https://github.com/GarethDJohn/media-library-server-scan-queue-processor/issues"
   },
-  "homepage": "https://github.com/GarethDJohn/node-github-flow-circle-ci-starter#readme",
+  "homepage": "https://github.com/GarethDJohn/media-library-server-scan-queue-processor#readme",
   "devDependencies": {
+    "@types/bull": "^3.12.0",
+    "@types/chai": "^4.2.9",
+    "@types/chai-as-promised": "^7.1.2",
+    "@types/mocha": "^7.0.1",
+    "@types/mongoose": "^5.7.3",
+    "@types/sinon": "^7.5.2",
     "chai": "^4.2.0",
-    "mocha": "^7.0.1"
+    "mocha": "^7.0.1",
+    "sinon": "^9.0.0",
+    "ts-mocha": "^6.0.0",
+    "typescript": "^3.8.2"
+  },
+  "dependencies": {
+    "@media-library/media-library-models": "^1.0.1",
+    "bull": "^3.13.0",
+    "chai-as-promised": "^7.1.1",
+    "mongoose": "^5.9.2",
+    "music-metadata": "^6.3.4"
   }
 }

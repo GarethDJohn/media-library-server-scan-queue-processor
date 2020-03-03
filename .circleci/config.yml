@@ -1,7 +1,7 @@
 version: 2
 jobs:
   install:
-    working_directory: ~/node-github-flow-circle-ci-starter
+    working_directory: ~/media-library-server-scan-queue-processor
     docker:
       - image: circleci/node:lts
     steps:
@@ -24,7 +24,7 @@ jobs:
             - .
 
   unit-test:
-    working_directory: ~/node-github-flow-circle-ci-starter
+    working_directory: ~/media-library-server-scan-queue-processor
     docker:
       - image: circleci/node:lts
 
@@ -33,11 +33,25 @@ jobs:
           at: .
       - run: npm test
   
-  publish:
-    working_directory: ~/node-github-fow-circle-ci-starter
+  build:
+    working_directory: ~/media-library-server-scan-queue-processor
     docker:
       - image: circleci/node:lts
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: 'Build package'
+          command: npm run-script build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
 
+  publish:
+    working_directory: ~/media-library-server-scan-queue-processor
+    docker:
+      - image: circleci/node:lts
     steps:
       - attach_workspace:
           at: .
@@ -46,7 +60,7 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
       - run:
           name: Publish package
-          command: npm publish --dry-run
+          command: npm publish --access public
 
 workflows:
   version: 2
@@ -74,9 +88,19 @@ workflows:
             tags:
               only:
                 - /^v\d+\.\d+\.\d+/
-      - publish:
+      - build:
           requires:
             - install
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only:
+                - /^v\d+\.\d+\.\d+/
+      - publish:
+          requires:
+            - build
           filters:
             branches:
               ignore:
